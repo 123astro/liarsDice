@@ -9,13 +9,10 @@ public class Cup {
     static int numberOfDice = 0 ;
 
     public Cup() {
-
         while (dice.size() < numberOfDice) {  //you need size of dice
             dice.add(new Die());      // remember .add
         }
     }
-
-
 
     public void removeDie() {
         dice.remove(0);
@@ -26,7 +23,6 @@ public class Cup {
             die.roll();
         }
     }
-
 
     public String displayCup() {  // display used for end user
         String output = ""; // assign output a blank string
