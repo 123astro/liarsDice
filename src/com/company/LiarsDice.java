@@ -11,7 +11,7 @@ public class LiarsDice {
     public String wasLiar;
     public int numberOfPlayers;
     public static Map<Integer, Integer> freq = new HashMap<>();
-    private int activePlayerIndex = 0;
+    public int activePlayerIndex = 0; // starts at index 0 bc first player to sign up
 
     public LiarsDice() {
         System.out.println("How many players (2 through 6)?");
@@ -35,22 +35,24 @@ public class LiarsDice {
 
     public void play() {
         while (players.size() > 1) {  // game doesn't end until player size is no longer
-            // greater than 1 => rounds continue
+            // greater than 1 => rounds continue => loops through game
             round();
         }
-        System.out.println(players.get(0).name + "'s the Winner,  Winner, Winner, Chicken dinner!!!!"); // end of game
+        System.out.println(players.get(0).name + "'s the Winner,  Winner, Winner, Chicken dinner!!!!"); // end the
+        // game by grabbing the last player in players
     }
 
     public void round() {
         rollAll();
-        boolean isRoundOver = false; // callLair turns isRoundOver to turn if user believes previous player lied.
+        boolean isRoundOver = false; // callLiar() returns true if user believes it was a lie.
         boolean isTurnOne = true;  // safeguard => no prompt if liar prior to bidding. First turn of round only!
-        while (!isRoundOver) { // while loop continues until lair method returns True.
+        while (!isRoundOver) { // while loop continues until liar method returns True. Logic below is to test on liar
+            // then progress into turn().
             System.out.println(getActivePlayer().name + "'s turn"); // inform who's turn it is and invoke the
-            // getActivePlayer method which is the index of the player out of players list.
-            System.out.println(getActivePlayer().cup.displayCup());
-            if (!isTurnOne) {    // turn one is true and set to false bc the else is executed.
-                isRoundOver = callLiar(getActivePlayer());
+            // getActivePlayer method which is the index of the player out of players list. default is 0 index
+            System.out.println(getActivePlayer().cup.displayCup()); //display their cup
+            if (!isTurnOne) {    // turn one is true not prompting the user if they lied.
+                isRoundOver = callLiar(getActivePlayer()); // after turn one => callLiar() is being checked for true.
             } else {
                 isTurnOne = false; // sets isTurn to false => next loop => step into   if (!isTurnOne).
             }

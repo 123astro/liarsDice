@@ -4,7 +4,7 @@ package com.company;
 import java.util.*;
 
 public class Cup {
-    public int amountOfDice;
+
     public  List<Die> dice = new ArrayList<>();
     static int numberOfDice = 0 ;
 
