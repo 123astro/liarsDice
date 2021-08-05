@@ -44,13 +44,10 @@ public class LiarsDice {
 
     public void round() {  // the while loop transitions from player to player's turn until liar is called.
         rollAll();
-
-        boolean isRoundOver = false; // callLiar() returns true if user believes it was a lie.
         boolean isTurnOne = true;  // safeguard => no prompt if liar prior to bidding. First turn of round only!
-        while (!isRoundOver) { // while loop continues until liar method returns True. Logic below is to test on liar
-            // then progress into turn().
-            System.out.println(getActivePlayer().name + "'s turn"); // inform who's turn it is and invoke the
-            // getActivePlayer method which is the index of the player out of players list. default is 0 index
+        boolean isRoundOver = false; // callLiar() returns true when liar has been selected
+        while (!isRoundOver) { // while loop continues until liar method returns True.
+            System.out.println(getActivePlayer().name + "'s turn"); // getActivePlayer default is 0 index
             System.out.println(getActivePlayer().cup.displayCup()); //display their cup
             if (!isTurnOne) {    // turn one is true not prompting the user if they lied.
                 isRoundOver = callLiar(getActivePlayer()); // after turn one => callLiar() method is invoked
@@ -72,7 +69,6 @@ public class LiarsDice {
             activePlayer.cup.roll(); // roll player's dice
             diceFreqMap(activePlayer.cup.dice);//  take the active players dice and add to freq map
         }
-
         System.out.println("New Roll!!!!"); // print out new roll
         System.out.println("There are " + numberOfDiceInPlay() + " dice in play now."); // announce the number of
         // dice in play.
@@ -136,21 +132,21 @@ public class LiarsDice {
         return num2;
     }
 
-    public void removePlayer() { // players are in the Player list.
+    public void removePlayer() { //
         for (int i = 0; i < players.size(); i++) { // setup for loop.
             if (players.get(i).cup.dice.size() < 1) { //go through the list of players and verify they have more than
                 // one die.
-            }
-            players.remove(i); // remove that player i
-
             if (i == players.size() - 1) { // if i (index of that player) is equal to the last players index (using
                 // player.size - 1 for the index)  - you need to setNextPlayerTurn
                 setNextPlayersTurn();
-
             }
-            break;
+                players.remove(i); // remove that player i
+                break;
+            }
         }
+
     }
+
 
     public void clearScreen() {
         for (int i = 0; i < 4; i++) {
