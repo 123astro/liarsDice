@@ -128,101 +128,109 @@ public class LiarsDice {
 
     public void removePlayer() { //
         for (int i = 0; i < players.size(); i++) { // setup for loop.
-            if (players.get(i).cup.dice.size() < 1) { //go through the list of players and verify they have more than
-                // one die.
-                if (i == (players.size() - 1)) {
+            if (players.get(i).cup.dice.size() < 1) {
+                if (i % 2 == 1) {  // players in an odd index
+                    if (i == (players.size() - 1)) {
+                        setNextPlayersTurn();
+                    }
+                    players.remove(i); // remove that player i
+                    break;
+                } else  { // players in an even index
+                    players.remove(i); // remove that player i
                     setNextPlayersTurn();
+                    break;
                 }
-                players.remove(i); // remove that player i
-                break;
+            }
+        }
+    }
+        public void clearScreen () {
+            for (int i = 0; i < 4; i++) {
+                System.out.println("\n");
             }
         }
 
-    }
-
-    public void clearScreen() {
-        for (int i = 0; i < 4; i++) {
-            System.out.println("\n");
+        public void zeroOutCurrentBid () {  //used after liar has need called and the while loop in round is exited.
+            currentBid[0] = 0;
+            currentBid[1] = 0;
         }
-    }
 
-    public void zeroOutCurrentBid() {  //used after liar has need called and the while loop in round is exited.
-        currentBid[0] = 0;
-        currentBid[1] = 0;
-    }
+        public boolean callLiar (Player activePlayer){  // call liar logic
+            System.out.println(getActivePlayer().name + "'s turn"); // getActivePlayer default is 0 index
+            System.out.println("Take a guess - Did " + getPreviousPlayer().name + " lie (y/n)? ");
+            wasLiar = scanner.next();
+            if (wasLiar.equals("y") || wasLiar.equals("yes")) {
+                System.out.println(activePlayer.name + " guessed yes that " + getPreviousPlayer().name + " lied!");
+                if ((freq.get(currentBid[0]) == null) || (freq.get(currentBid[0]) < currentBid[1]))//qty check => to
+                // retrieve qty in freq map, you need to pass the value and the get() will return the qty of the
+                //  key. The null test condition needed to be tested first!
+                {
+                    System.out.println(getPreviousPlayer().name + " LIED and loses a die! \nBelow has the list of " +
+                            "dice values and quantities for that round.");
+                    System.out.println(freq);
+                    System.out.println(getPreviousPlayer().name + " lost a die.");
+                    getPreviousPlayer().cup.removeDie(); // need to use the getPrevious method to shift the die removal.
+                    System.out.println(getPreviousPlayer().name + " has " + getPreviousPlayer().cup.dice.size() +
+                            " die or dice left.");
+                    return true; // get out of round() loop
+                } else {
+                    System.out.println(activePlayer.name + " is so wrong! " + activePlayer.name + " shall lose a die. " +
+                            " \nBelow has the list of dice values and quantities for that round.");
+                    System.out.println(freq);
+                    System.out.println(activePlayer.name + " lost a die.");
+                    activePlayer.cup.removeDie();
+                    System.out.println(activePlayer.name + " has " + activePlayer.cup.dice.size() +
+                            " die or dice left.");
+                    return true; // get out of round() loop
+                }
+            }
+            return false;
+        }
 
-    public boolean callLiar(Player activePlayer) {  // call liar logic
-        System.out.println(getActivePlayer().name + "'s turn"); // getActivePlayer default is 0 index
-        System.out.println("Take a guess - Did " + getPreviousPlayer().name + " lie (y/n)? ");
-        wasLiar = scanner.next();
-        if (wasLiar.equals("y") || wasLiar.equals("yes")) {
-            System.out.println(activePlayer.name + " guessed yes that " + getPreviousPlayer().name + " lied!");
-            if ((freq.get(currentBid[0]) == null) || (freq.get(currentBid[0]) < currentBid[1]))//qty check => to
-            // retrieve qty in freq map, you need to pass the value and the get() will return the qty of the
-            //  key. The null test condition needed to be tested first!
-            {
-                System.out.println(getPreviousPlayer().name + " LIED and loses a die! \nBelow has the list of " +
-                        "dice values and quantities for that round.");
-                System.out.println(freq);
-                System.out.println(getPreviousPlayer().name + " lost a die.");
-                getPreviousPlayer().cup.removeDie(); // need to use the getPrevious method to shift the die removal.
-                return true; // get out of round() loop
+        public Player getPreviousPlayer () {  // need to remove a die in callLiar.
+            if (activePlayerIndex == 0) { // if their index is 0 => you need to get to the largest index
+                return players.get(players.size() - 1);
             } else {
-                System.out.println(activePlayer.name + " is so wrong! " + activePlayer.name + " shall lose a die. " +
-                        " \nBelow has the list of dice values and quantities for that round.");
-                System.out.println(freq);
-                System.out.println(activePlayer.name + " lost a die.");
-                activePlayer.cup.removeDie();
-                return true; // get out of round() loop
+                return players.get(activePlayerIndex - 1);
             }
         }
-        return false;
-    }
 
-    public Player getPreviousPlayer() {  // need to remove a die in callLiar.
-        if (activePlayerIndex == 0) { // if their index is 0 => you need to get to the largest index
-            return players.get(players.size() - 1);
-        } else {
-            return players.get(activePlayerIndex - 1);
-        }
-    }
+        public void isValidSelection (Player activePlayer,int currentQty, int currentValue){
+            int previousValue = currentBid[0];
+            int previousQty = currentBid[1];
 
-    public void isValidSelection(Player activePlayer, int currentQty, int currentValue) {
-        int previousValue = currentBid[0];
-        int previousQty = currentBid[1];
+            if (currentQty > previousQty) {
+                // below; needed to set bc if bid was accepted - the next bid need to compare to
+                // that bid.
+                System.out.println("valid quantity");
+                currentBid[0] = currentValue;
+                currentBid[1] = currentQty;
 
-        if (currentQty > previousQty) {
-            // below; needed to set bc if bid was accepted - the next bid need to compare to
-            // that bid.
-            System.out.println("valid quantity");
-            currentBid[0] = currentValue;
-            currentBid[1] = currentQty;
+            } else if (previousQty == currentQty && currentValue > previousValue) {
+                System.out.println("valid value");
+                currentBid[0] = currentValue;
 
-        } else if (previousQty == currentQty && currentValue > previousValue) {
-            System.out.println("valid value");
-            currentBid[0] = currentValue;
-
-        } else {
-            System.out.println("Try again - invalid bid!");
-            getSelections(activePlayer);
-        }
-    }
-
-    public void diceFreqMap(List<Die> dice) {  // frequency of dice OR quantities of each die.
-        for (Die die : dice) {
-            if (!freq.containsKey(die.faceUpValue)) {
-                freq.put(die.faceUpValue, 1);
             } else {
-                freq.put(die.faceUpValue, freq.get(die.faceUpValue) + 1);
+                System.out.println("Try again - invalid bid!");
+                getSelections(activePlayer);
             }
         }
-    }
 
-    public void clearFreq() {  // clear the map bc a die has left the game AND a new round will start with a new freq
-        // map reflecting the new freq map.
-        freq.clear();
+        public void diceFreqMap (List < Die > dice) {  // frequency of dice OR quantities of each die.
+            for (Die die : dice) {
+                if (!freq.containsKey(die.faceUpValue)) {
+                    freq.put(die.faceUpValue, 1);
+                } else {
+                    freq.put(die.faceUpValue, freq.get(die.faceUpValue) + 1);
+                }
+            }
+        }
+
+        public void clearFreq ()
+        {  // clear the map bc a die has left the game AND a new round will start with a new freq
+            // map reflecting the new freq map.
+            freq.clear();
+        }
     }
-}
 
 
 
