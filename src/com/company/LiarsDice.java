@@ -38,7 +38,7 @@ public class LiarsDice {
             // greater than 1 => rounds continue => loops through game
             round();
         }
-        System.out.println(players.get(0).name + "'s the Winner,\n*******Winner, Winner, Chicken " +
+        System.out.println(players.get(0).name + "'s the Winner!\n*******Winner, Winner, Chicken " +
                 "dinner!!!!*******\n\n" + players.get(0).name + " is going to Disney World!!");
         // end the game by grabbing the last player in players
     }
@@ -56,14 +56,14 @@ public class LiarsDice {
             }
         } while ((!isRoundOver));
         zeroOutCurrentBid();  // need to start round over and this includes setting the current bids back to zeros
-        clearFreq();  // clear the freq map because a new roll and dice amounts will happen if no winner is declared.
+        clearFreqMap();  // clear the freq map because a new roll and dice amounts will happen if no winner is declared.
         removePlayer(); // make sure all players still have die. If they do not, remove the player from the list!
     }
 
     public void rollAll() {
         for (Player activePlayer : players) { //assign the activePlayer to each player in players list.
             activePlayer.cup.roll(); // roll player's dice
-            diceFreqMap(activePlayer.cup.dice);//  take the active players dice and add to freq map
+            createDiceFreqMap(activePlayer.cup.dice);//  take the active players dice and add to freq map
         }
         System.out.println("New Roll!!!!"); // print out new roll
         System.out.println("There are " + numberOfDiceInPlay() + " dice in play now."); // announce the number of
@@ -135,20 +135,20 @@ public class LiarsDice {
 
     public void removePlayer() {
         for (int i = 0; i < players.size(); i++) { // setup for loop.
-            if (players.get(i).cup.dice.size() < 1) {
+            if (players.get(i).cup.dice.size() < 1) { // iterate through all players cups searching for no dice
                 if ((i == (players.size() - 1)) || (i == 0)) {
                     System.out.println(players.get(i).name + " has left the game!!!!");
                     players.remove(i);
                     activePlayerIndex = 0;
-                    for(int j = 0; j < players.size(); j++) {
-                        System.out.println(players.get(j).name + " is still in the game!!! ");
+                    for (Player player : players) {
+                        System.out.println("\n" + player.name + " is still in the game!!! ");
                     }
                     break;
                 } else {
                     System.out.println(players.get(i).name + " has left the game!!!!");
                     players.remove(i);
-                    for(int k = 0; k < players.size(); k++) {
-                        System.out.println(players.get(k).name + " is still in the game!!! ");
+                    for (Player player : players) {
+                        System.out.println("\n" + player.name + " is still in the game!!! ");
                     }
                     break;
                 }
@@ -156,6 +156,7 @@ public class LiarsDice {
         }
 
     }
+
     public void clearScreen() {
         for (int i = 0; i < 4; i++) {
             System.out.println("\n");
@@ -231,7 +232,7 @@ public class LiarsDice {
         }
     }
 
-    public void diceFreqMap(List<Die> dice) {  // frequency of dice OR quantities of each die.
+    public void createDiceFreqMap(List<Die> dice) {  // frequency of dice OR quantities of each die.
         for (Die die : dice) {
             if (!freq.containsKey(die.faceUpValue)) {
                 freq.put(die.faceUpValue, 1);
@@ -241,7 +242,7 @@ public class LiarsDice {
         }
     }
 
-    public void clearFreq() {  // clear the map bc a die has left the game AND a new round will start with a new freq
+    public void clearFreqMap() {  // clear the map bc a die has left the game AND a new round will start with a new freq
         // map reflecting the new freq map.
         freq.clear();
     }
