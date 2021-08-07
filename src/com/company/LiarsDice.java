@@ -38,7 +38,8 @@ public class LiarsDice {
             // greater than 1 => rounds continue => loops through game
             round();
         }
-        System.out.println(players.get(0).name + "'s the Winner,\n*******Winner, Winner, Chicken dinner!!!!*******");
+        System.out.println(players.get(0).name + "'s the Winner,\n*******Winner, Winner, Chicken " +
+                "dinner!!!!*******\n\n" + players.get(0).name + " is going to Disney World!!");
         // end the game by grabbing the last player in players
     }
 
