@@ -13,7 +13,7 @@ public class LiarsDice {
     public static Map<Integer, Integer> freq = new HashMap<>();
     public int activePlayerIndex = 0; // starts at index 0 bc first player to sign up
 
-    public LiarsDice() {
+    public void startGame() {
         do {
             System.out.println("How many players (2 through 6)?");
             scanForIntOnly();
@@ -40,13 +40,15 @@ public class LiarsDice {
         }
         System.out.println(players.get(0).name + "'s the Winner!\n*******Winner, Winner, Chicken " +
                 "dinner!!!!*******\n\n" + players.get(0).name + " is going to Disney World!!");
+        return;
         // end the game by grabbing the last player in players
     }
 
     public void round() {  // the while loop transitions from player to player's turn until liar is called.
-        rollAll();
-        boolean isRoundOver = false;
+        rollAll(); // roll dice for each player and create a hashmap.
+        boolean isRoundOver = false;// the order of the loop allows the first person not to be prompted for a lie.
         do {
+            System.out.println("\n");
             System.out.println(getActivePlayer().cup.displayCup());
             turnController(getActivePlayer());
             System.out.println(getActivePlayer().cup.displayCup());
@@ -65,9 +67,10 @@ public class LiarsDice {
             activePlayer.cup.roll(); // roll player's dice
             createDiceFreqMap(activePlayer.cup.dice);//  take the active players dice and add to freq map
         }
-        System.out.println("New Roll!!!!"); // print out new roll
+        System.out.println("\nNew Roll!!!!"); // print out new roll
         System.out.println("There are " + numberOfDiceInPlay() + " dice in play now."); // announce the number of
         // dice in play.
+        displayNameAndDiceLeft();
     }
 
     public Player getActivePlayer() {
@@ -111,7 +114,7 @@ public class LiarsDice {
 
     public void scanForStringOnly() {
         while (scanner.hasNextInt()) {  // while loop = prompt user if an int wasn't entered
-            System.out.println("Input is not a letter!!!!");
+            System.out.println("Please input yes or no.");
             scanner.nextLine();
         }
     }
@@ -140,21 +143,24 @@ public class LiarsDice {
                     System.out.println(players.get(i).name + " has left the game!!!!");
                     players.remove(i);
                     activePlayerIndex = 0;
-                    for (Player player : players) {
-                        System.out.println("\n" + player.name + " is still in the game!!! ");
-                    }
+                    displayNameAndDiceLeft();
                     break;
                 } else {
                     System.out.println(players.get(i).name + " has left the game!!!!");
                     players.remove(i);
-                    for (Player player : players) {
-                        System.out.println("\n" + player.name + " is still in the game!!! ");
-                    }
+                    displayNameAndDiceLeft();
                     break;
                 }
             }
         }
 
+    }
+
+    public void displayNameAndDiceLeft(){
+        for (Player player : players) {
+            System.out.println("\n" + player.name + " is in the game with " + player.cup.dice.size()  +  " die" +
+                    " or dice.");
+        }
     }
 
     public void clearScreen() {
@@ -184,8 +190,6 @@ public class LiarsDice {
                 System.out.println(freq);
                 System.out.println(getPreviousPlayer().name + " lost a die.");
                 getPreviousPlayer().cup.removeDie(); // need to use the getPrevious method to shift the die removal.
-                System.out.println(getPreviousPlayer().name + " has " + getPreviousPlayer().cup.dice.size() +
-                        " die or dice left.");
                 return true; // get out of round() loop
             } else {
                 System.out.println(activePlayer.name + " is so wrong! " + activePlayer.name + " shall lose a die. " +
@@ -193,8 +197,6 @@ public class LiarsDice {
                 System.out.println(freq);
                 System.out.println(activePlayer.name + " lost a die.");
                 activePlayer.cup.removeDie();
-                System.out.println(activePlayer.name + " has " + activePlayer.cup.dice.size() +
-                        " die or dice left.");
                 return true; // get out of round() loop
             }
         } else if (wasLiar.equals("n") || wasLiar.equals("no") || wasLiar.equals("N")) {
