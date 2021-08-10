@@ -8,7 +8,7 @@ public class Test {
         LiarsDice game = new LiarsDice();
 
         game.numberOfPlayers = 3;
-        Cup.numberOfDice = 1;
+        Cup.numberOfDice = 2;
         game.players.add( new Player("Cliff"));
         game.players.add( new Player("Keith"));
         game.players.add( new Player("Sally"));

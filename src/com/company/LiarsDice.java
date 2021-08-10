@@ -4,25 +4,26 @@ import java.util.*;
 
 public class LiarsDice {
     public List<Player> players = new ArrayList<>();
-    public Scanner scanner = new Scanner(System.in);
+    public static Scanner scanner = new Scanner(System.in);
     private final int MIN_PLAYERS = 2;
     private final int MAX_PLAYERS = 6;
-    public int[] currentBid = new int[2]; // compare the scanned in values to the previous scanned in values
+    public static int[] currentBid = new int[2]; // compare the scanned in values to the previous scanned in values
     public String wasLiar;
     public int numberOfPlayers;
     public static Map<Integer, Integer> freq = new HashMap<>();
     public int activePlayerIndex = 0; // starts at index 0 bc first player to sign up
+    public static Validate valid = new Validate();
 
     public void startGame() {
         do {
             System.out.println("How many players (2 through 6)?");
-            scanForIntOnly();
+            valid.scanForIntOnly();
             numberOfPlayers = scanner.nextInt();
             scanner.nextLine();
         } while (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS);
         System.out.println("How many dice would you like to play with?");
         do {
-            scanForIntOnly();
+            valid.scanForIntOnly();
             Cup.numberOfDice = scanner.nextInt();
             scanner.nextLine();
         } while (Cup.numberOfDice == 0);
@@ -83,37 +84,23 @@ public class LiarsDice {
         clearScreen(); // add lines to the screen to clear.
     }
 
-    public void getSelections(Player activePlayer) { // logic for player entering bid
+    public static void getSelections(Player activePlayer) { // logic for player entering bid
         int valueBid0 = 0; //  initial value
         int qtyBid1 = 0;  // initial value
 
         System.out.println(activePlayer.name + " select a die value.");
-        scanForIntOnly(); //check if the player entered an integer
+        valid.scanForIntOnly(); //check if the player entered an integer
         valueBid0 = scanner.nextInt();
 
         System.out.println(activePlayer.name + " please enter the quantity of that die value");
-        scanForIntOnly(); //check if the player entered an integer
+        valid.scanForIntOnly(); //check if the player entered an integer
         qtyBid1 = scanner.nextInt();
 
         if (currentBid[0] == 0) {  // first bid or new ROUND
             currentBid[0] = valueBid0; // WHEN YOU START GAME current bid is  = 0
             currentBid[1] = qtyBid1;// WHEN YOU START GAME current bid is  = 0
         } else {
-            isValidSelection(activePlayer, qtyBid1, valueBid0); // After first round => checking if valid bids
-        }
-    }
-
-    public void scanForIntOnly() {
-        while (!scanner.hasNextInt()) {  // while loop = prompt user if an int wasn't entered
-            System.out.println("Input is not a number!!!!");
-            scanner.nextLine();
-        }
-    }
-
-    public void scanForStringOnly() {
-        while (scanner.hasNextInt()) {  // while loop = prompt user if an int wasn't entered
-            System.out.println("Please input yes or no.");
-            scanner.nextLine();
+            valid.isValidBid(activePlayer, qtyBid1, valueBid0); // After first round => checking if valid bids
         }
     }
 
@@ -167,7 +154,7 @@ public class LiarsDice {
     }
 
     public void clearScreen() {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 6; i++) {
             System.out.println("\n");
         }
     }
@@ -180,7 +167,7 @@ public class LiarsDice {
     public boolean callLiar(Player activePlayer) {
         System.out.println(getActivePlayer().name + "'s turn");
         System.out.println("Take a guess - Did " + getPreviousPlayer().name + " lie (y/n)? ");
-        scanForStringOnly();
+        valid.scanForStringOnly();
         wasLiar = scanner.next();
         if (wasLiar.equals("y") || wasLiar.equals("yes") || wasLiar.equals("Y") || wasLiar.equals("YES")) {
             System.out.println(activePlayer.name + " guessed yes that " + getPreviousPlayer().name + " lied!");
@@ -208,35 +195,11 @@ public class LiarsDice {
     return callLiar(activePlayer);
     }
 
-
-
-
     public Player getPreviousPlayer() {  // need to remove a die in callLiar.
         if (activePlayerIndex == 0) { // if their index is 0 => you need to get to the largest index
             return players.get(players.size() - 1);
         } else {
             return players.get(activePlayerIndex - 1);
-        }
-    }
-
-    public void isValidSelection(Player activePlayer, int currentQty, int currentValue) {
-        int previousValue = currentBid[0];
-        int previousQty = currentBid[1];
-
-        if (currentQty > previousQty) {
-            // below; needed to set bc if bid was accepted - the next bid need to compare to
-            // that bid.
-            System.out.println("valid quantity");
-            currentBid[0] = currentValue;
-            currentBid[1] = currentQty;
-
-        } else if (previousQty == currentQty && currentValue > previousValue) {
-            System.out.println("valid value");
-            currentBid[0] = currentValue;
-
-        } else {
-            System.out.println("Try again - invalid bid!");
-            getSelections(activePlayer);
         }
     }
 
