@@ -7,11 +7,12 @@ public class Test {
 
         LiarsDice game = new LiarsDice();
 
-        game.numberOfPlayers =3;
+        game.numberOfPlayers = 3;
         Cup.numberOfDice = 1;
-        game.players.add( new Player("Jon"));
-        game.players.add( new Player("Sam"));
+        game.players.add( new Player("Cliff"));
+        game.players.add( new Player("Keith"));
         game.players.add( new Player("Sally"));
+        //game.players.add( new Player("Jim"));
         game.play();
 
     }

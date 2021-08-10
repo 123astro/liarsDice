@@ -147,6 +147,7 @@ public class LiarsDice {
                     break;
                 } else {
                     System.out.println(players.get(i).name + " has left the game!!!!");
+                    activePlayerIndex = i; // had to add!!
                     players.remove(i);
                     displayNameAndDiceLeft();
                     break;
