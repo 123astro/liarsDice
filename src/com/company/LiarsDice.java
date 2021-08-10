@@ -74,9 +74,7 @@ public class LiarsDice {
     }
 
     public Player getActivePlayer() {
-        return players.get(activePlayerIndex); // getting players index that has players reference pointer.
-        // activePlayerIndex is a static int that is set to 0 to start. You need this to track this player through
-        // turn.
+        return players.get(activePlayerIndex);
     }
 
     public void turnController(Player activePlayer) {
@@ -137,8 +135,8 @@ public class LiarsDice {
     }
 
     public void removePlayer() {
-        for (int i = 0; i < players.size(); i++) { // setup for loop.
-            if (players.get(i).cup.dice.size() < 1) { // iterate through all players cups searching for no dice
+        for (int i = 0; i < players.size(); i++) { // setup classic for loop (for in doesn't work bc we need the index)
+            if (numberOfDiceInCup(i) < 1) { // iterate through all players cups searching for no dice
                 if ((i == (players.size() - 1)) || (i == 0)) {
                     System.out.println(players.get(i).name + " has left the game!!!!");
                     players.remove(i);
@@ -147,7 +145,7 @@ public class LiarsDice {
                     break;
                 } else {
                     System.out.println(players.get(i).name + " has left the game!!!!");
-                    activePlayerIndex = i; // had to add!!
+                    activePlayerIndex = i; // need to set prior to deleting player
                     players.remove(i);
                     displayNameAndDiceLeft();
                     break;
@@ -157,9 +155,13 @@ public class LiarsDice {
 
     }
 
-    public void displayNameAndDiceLeft(){
+    public int numberOfDiceInCup(int index) {  // method used in removePlayer => easy readable
+        return players.get(index).cup.dice.size();
+    }
+
+    public void displayNameAndDiceLeft() {
         for (Player player : players) {
-            System.out.println("\n" + player.name + " is in the game with " + player.cup.dice.size()  +  " die" +
+            System.out.println("\n" + player.name + " is in the game with " + player.cup.dice.size() + " die" +
                     " or dice.");
         }
     }
@@ -175,12 +177,12 @@ public class LiarsDice {
         currentBid[1] = 0;
     }
 
-    public boolean callLiar(Player activePlayer) {  // call liar logic
-        System.out.println(getActivePlayer().name + "'s turn"); // getActivePlayer default is 0 index
+    public boolean callLiar(Player activePlayer) {
+        System.out.println(getActivePlayer().name + "'s turn");
         System.out.println("Take a guess - Did " + getPreviousPlayer().name + " lie (y/n)? ");
         scanForStringOnly();
         wasLiar = scanner.next();
-        if (wasLiar.equals("y") || wasLiar.equals("yes") || wasLiar.equals("Y")) {
+        if (wasLiar.equals("y") || wasLiar.equals("yes") || wasLiar.equals("Y") || wasLiar.equals("YES")) {
             System.out.println(activePlayer.name + " guessed yes that " + getPreviousPlayer().name + " lied!");
             if ((freq.get(currentBid[0]) == null) || (freq.get(currentBid[0]) < currentBid[1]))//qty check => to
             // retrieve qty in freq map, you need to pass the value and the get() will return the qty of the
@@ -200,11 +202,14 @@ public class LiarsDice {
                 activePlayer.cup.removeDie();
                 return true; // get out of round() loop
             }
-        } else if (wasLiar.equals("n") || wasLiar.equals("no") || wasLiar.equals("N")) {
+        } else if (wasLiar.equals("n") || wasLiar.equals("no") || wasLiar.equals("N") || wasLiar.equals("NO")) {
             return false;
         }
-        return false;
+    return callLiar(activePlayer);
     }
+
+
+
 
     public Player getPreviousPlayer() {  // need to remove a die in callLiar.
         if (activePlayerIndex == 0) { // if their index is 0 => you need to get to the largest index
