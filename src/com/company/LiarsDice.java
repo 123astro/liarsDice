@@ -60,7 +60,7 @@ public class LiarsDice {
         } while ((!isRoundOver));
         zeroOutCurrentBid();  // need to start round over and this includes setting the current bids back to zeros
         clearFreqMap();  // clear the freq map because a new roll and dice amounts will happen if no winner is declared.
-        removePlayer(); // make sure all players still have die. If they do not, remove the player from the list!
+        removePlayer(); // make sure all players still have dice. If they do not, remove the player from the list!
     }
 
     public void rollAll() {
@@ -168,7 +168,7 @@ public class LiarsDice {
         System.out.println(getActivePlayer().name + "'s turn");
         System.out.println("Take a guess - Did " + getPreviousPlayer().name + " lie (y/n)? ");
         valid.scanForStringOnly();
-        wasLiar = scanner.next();
+        wasLiar = scanner.next().trim();
         if (wasLiar.equals("y") || wasLiar.equals("yes") || wasLiar.equals("Y") || wasLiar.equals("YES")) {
             System.out.println(activePlayer.name + " guessed yes that " + getPreviousPlayer().name + " lied!");
             if ((freq.get(currentBid[0]) == null) || (freq.get(currentBid[0]) < currentBid[1]))//qty check => to
